@@ -1,0 +1,322 @@
+{
+  "scenarios": [
+    {
+      "id": "SCENARIO-001",
+      "name": "Hurricane Disruption - Southeast Asia",
+      "description": "Category 4 hurricane approaching Shenzhen, China affecting primary supplier",
+      "severity": "critical",
+      "type": "weather",
+      "status": "monitoring",
+      "event": {
+        "type": "weather",
+        "source": "weather_api",
+        "timestamp": "2026-05-02T00:00:00Z",
+        "data": {
+          "event_type": "hurricane",
+          "severity": "severe",
+          "location": {
+            "city": "Shenzhen",
+            "country": "China",
+            "region": "Southeast Asia",
+            "coordinates": {"lat": 22.5431, "lon": 114.0579}
+          },
+          "affected_suppliers": ["SUP-001"],
+          "duration_hours": 72,
+          "wind_speed_kmh": 210,
+          "expected_impact": "Port closures, power outages, transportation delays"
+        }
+      },
+      "expected_impact": {
+        "affected_orders": ["ORD-001", "ORD-004"],
+        "affected_skus": ["SKU-001", "SKU-002"],
+        "affected_customers": ["CUST-001", "CUST-005"],
+        "estimated_delay_days": 5,
+        "estimated_cost": 28500,
+        "sla_violations": 2
+      },
+      "recommended_actions": [
+        {
+          "type": "reroute_supplier",
+          "description": "Switch to backup supplier SUP-002 in Taiwan",
+          "estimated_cost": 8500,
+          "estimated_time_saved_days": 3
+        },
+        {
+          "type": "expedite_shipment",
+          "description": "Upgrade to air freight for critical orders",
+          "estimated_cost": 12000,
+          "estimated_time_saved_days": 4
+        },
+        {
+          "type": "reallocate_inventory",
+          "description": "Transfer available inventory from WH-EAST to fulfill partial orders",
+          "estimated_cost": 2000,
+          "estimated_time_saved_days": 2
+        }
+      ]
+    },
+    {
+      "id": "SCENARIO-002",
+      "name": "Supplier Production Delay",
+      "description": "Manufacturing equipment failure at TechComponents Inc causing 7-day delay",
+      "severity": "high",
+      "type": "supplier",
+      "status": "active",
+      "event": {
+        "type": "supplier",
+        "source": "supplier_edi",
+        "timestamp": "2026-05-02T06:00:00Z",
+        "data": {
+          "supplier_id": "SUP-001",
+          "supplier_name": "TechComponents Inc",
+          "issue_type": "equipment_failure",
+          "affected_skus": ["SKU-001", "SKU-002"],
+          "delay_days": 7,
+          "production_capacity_impact": 0.60,
+          "estimated_recovery": "2026-05-09T00:00:00Z",
+          "reason": "Critical manufacturing equipment malfunction requiring parts replacement"
+        }
+      },
+      "expected_impact": {
+        "affected_orders": ["ORD-001", "ORD-004"],
+        "affected_skus": ["SKU-001", "SKU-002"],
+        "affected_customers": ["CUST-001", "CUST-005"],
+        "estimated_delay_days": 7,
+        "estimated_cost": 35000,
+        "sla_violations": 2
+      },
+      "recommended_actions": [
+        {
+          "type": "activate_backup_supplier",
+          "description": "Engage backup supplier SUP-003 (American Parts Co) for immediate production",
+          "estimated_cost": 15000,
+          "estimated_time_saved_days": 5
+        },
+        {
+          "type": "split_shipment",
+          "description": "Split orders to use available inventory and new production",
+          "estimated_cost": 3500,
+          "estimated_time_saved_days": 3
+        }
+      ]
+    },
+    {
+      "id": "SCENARIO-003",
+      "name": "Carrier Performance Degradation",
+      "description": "FedEx experiencing significant delays due to labor shortage",
+      "severity": "medium",
+      "type": "carrier",
+      "status": "active",
+      "event": {
+        "type": "carrier",
+        "source": "carrier_api",
+        "timestamp": "2026-05-02T08:30:00Z",
+        "data": {
+          "carrier_name": "FedEx",
+          "issue_type": "labor_shortage",
+          "affected_routes": ["Asia-Pacific to North America"],
+          "on_time_rate": 0.62,
+          "average_delay_days": 3,
+          "affected_tracking_numbers": ["FDX123456789", "FDX321654987"],
+          "estimated_resolution": "2026-05-10T00:00:00Z"
+        }
+      },
+      "expected_impact": {
+        "affected_orders": ["ORD-001", "ORD-005"],
+        "affected_customers": ["CUST-001", "CUST-004"],
+        "estimated_delay_days": 3,
+        "estimated_cost": 18000,
+        "sla_violations": 1
+      },
+      "recommended_actions": [
+        {
+          "type": "reroute_carrier",
+          "description": "Switch to DHL for remaining shipments",
+          "estimated_cost": 6500,
+          "estimated_time_saved_days": 2
+        },
+        {
+          "type": "expedite_shipment",
+          "description": "Upgrade critical shipments to express service",
+          "estimated_cost": 8500,
+          "estimated_time_saved_days": 3
+        }
+      ]
+    },
+    {
+      "id": "SCENARIO-004",
+      "name": "Port Congestion - Los Angeles",
+      "description": "Severe congestion at Port of Los Angeles causing 5-day delays",
+      "severity": "high",
+      "type": "port",
+      "status": "monitoring",
+      "event": {
+        "type": "port",
+        "source": "port_authority",
+        "timestamp": "2026-05-02T10:00:00Z",
+        "data": {
+          "port_name": "Port of Los Angeles",
+          "location": "Los Angeles, CA",
+          "congestion_level": "severe",
+          "average_wait_time_hours": 120,
+          "vessels_waiting": 45,
+          "cause": "Labor dispute and equipment shortage",
+          "estimated_clearance": "2026-05-07T00:00:00Z"
+        }
+      },
+      "expected_impact": {
+        "affected_orders": ["ORD-002", "ORD-003"],
+        "affected_customers": ["CUST-002", "CUST-003"],
+        "estimated_delay_days": 5,
+        "estimated_cost": 22000,
+        "sla_violations": 1
+      },
+      "recommended_actions": [
+        {
+          "type": "reroute_port",
+          "description": "Redirect shipments to Port of Long Beach",
+          "estimated_cost": 4500,
+          "estimated_time_saved_days": 3
+        },
+        {
+          "type": "reallocate_inventory",
+          "description": "Use WH-WEST inventory to fulfill orders immediately",
+          "estimated_cost": 2500,
+          "estimated_time_saved_days": 5
+        }
+      ]
+    },
+    {
+      "id": "SCENARIO-005",
+      "name": "Multi-Factor Disruption",
+      "description": "Combined weather event and supplier delay affecting multiple orders",
+      "severity": "critical",
+      "type": "combined",
+      "status": "monitoring",
+      "event": {
+        "type": "combined",
+        "source": "system_correlation",
+        "timestamp": "2026-05-02T12:00:00Z",
+        "data": {
+          "primary_event": "Typhoon in Taiwan affecting SUP-002",
+          "secondary_event": "Supplier SUP-001 equipment failure",
+          "affected_suppliers": ["SUP-001", "SUP-002"],
+          "affected_skus": ["SKU-001", "SKU-002", "SKU-003"],
+          "cascading_impact": true,
+          "estimated_total_delay_days": 10
+        }
+      },
+      "expected_impact": {
+        "affected_orders": ["ORD-001", "ORD-002", "ORD-004"],
+        "affected_customers": ["CUST-001", "CUST-003", "CUST-005"],
+        "estimated_delay_days": 10,
+        "estimated_cost": 65000,
+        "sla_violations": 3
+      },
+      "recommended_actions": [
+        {
+          "type": "emergency_procurement",
+          "description": "Initiate emergency procurement from SUP-003 and SUP-004",
+          "estimated_cost": 25000,
+          "estimated_time_saved_days": 6
+        },
+        {
+          "type": "reallocate_inventory",
+          "description": "Redistribute all available inventory across warehouses",
+          "estimated_cost": 5000,
+          "estimated_time_saved_days": 4
+        },
+        {
+          "type": "adjust_priority",
+          "description": "Prioritize critical customer orders (CUST-001, CUST-003)",
+          "estimated_cost": 0,
+          "estimated_time_saved_days": 2
+        }
+      ]
+    },
+    {
+      "id": "SCENARIO-006",
+      "name": "Middle East Tensions - Shipping Route Disruption",
+      "description": "Geopolitical tensions in Middle East causing Red Sea shipping route closures and delays",
+      "severity": "critical",
+      "type": "geopolitical",
+      "status": "active",
+      "event": {
+        "type": "geopolitical",
+        "source": "news_api",
+        "timestamp": "2026-05-02T14:00:00Z",
+        "data": {
+          "event_type": "shipping_route_closure",
+          "severity": "critical",
+          "location": {
+            "region": "Middle East",
+            "affected_routes": ["Red Sea", "Suez Canal"],
+            "coordinates": {"lat": 20.0, "lon": 38.0}
+          },
+          "affected_suppliers": ["SUP-001", "SUP-004"],
+          "duration_days": 14,
+          "impact": "Major shipping route disruption forcing vessels to reroute around Africa",
+          "expected_impact": "15-20 day delays for Asia-Europe shipments"
+        }
+      },
+      "expected_impact": {
+        "affected_orders": ["ORD-001", "ORD-003"],
+        "affected_skus": ["SKU-001", "SKU-005"],
+        "affected_customers": ["CUST-001", "CUST-002"],
+        "estimated_delay_days": 18,
+        "estimated_cost": 45000,
+        "sla_violations": 2
+      },
+      "recommended_actions": [
+        {
+          "type": "reroute_shipping",
+          "description": "Reroute shipments via air freight to avoid Red Sea delays",
+          "estimated_cost": 52000,
+          "estimated_time_saved_days": 12
+        },
+        {
+          "type": "activate_regional_suppliers",
+          "description": "Source from regional suppliers in North America and Europe to bypass affected routes",
+          "estimated_cost": 48000,
+          "estimated_time_saved_days": 15
+        },
+        {
+          "type": "split_shipment_multimodal",
+          "description": "Use combination of air and rail freight through alternative routes",
+          "estimated_cost": 50000,
+          "estimated_time_saved_days": 10
+        }
+      ]
+    }
+  ],
+  "demo_sequence": [
+    {
+      "step": 1,
+      "scenario_id": "SCENARIO-002",
+      "title": "Supplier Production Delay",
+      "description": "Start with a straightforward supplier delay to demonstrate basic detection and response",
+      "demo_notes": "Shows autonomous decision-making with backup supplier activation"
+    },
+    {
+      "step": 2,
+      "scenario_id": "SCENARIO-003",
+      "title": "Carrier Performance Issue",
+      "description": "Demonstrate carrier rerouting and expedited shipping",
+      "demo_notes": "Highlights proactive customer communication"
+    },
+    {
+      "step": 3,
+      "scenario_id": "SCENARIO-001",
+      "title": "Weather Disruption",
+      "description": "Show weather-based disruption with multiple mitigation options",
+      "demo_notes": "Demonstrates multi-action response plan"
+    },
+    {
+      "step": 4,
+      "scenario_id": "SCENARIO-005",
+      "title": "Complex Multi-Factor Disruption",
+      "description": "Showcase system handling complex, cascading disruptions",
+      "demo_notes": "Demonstrates advanced decision-making and emergency procurement"
+    }
+  ]
+}

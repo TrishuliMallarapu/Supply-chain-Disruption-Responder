@@ -1,0 +1,471 @@
+{
+  "suppliers": [
+    {
+      "id": "SUP-001",
+      "name": "TechComponents Inc",
+      "location": {
+        "city": "Shenzhen",
+        "country": "China",
+        "region": "Asia Pacific"
+      },
+      "reliability_score": 0.92,
+      "lead_time_days": 14,
+      "capacity_units_per_month": 50000,
+      "specialties": ["Electronics", "Semiconductors"],
+      "contact": {
+        "email": "orders@techcomponents.com",
+        "phone": "+86-755-1234567"
+      }
+    },
+    {
+      "id": "SUP-002",
+      "name": "Global Electronics Supply",
+      "location": {
+        "city": "Taipei",
+        "country": "Taiwan",
+        "region": "Asia Pacific"
+      },
+      "reliability_score": 0.88,
+      "lead_time_days": 10,
+      "capacity_units_per_month": 30000,
+      "specialties": ["Electronics", "Components"],
+      "contact": {
+        "email": "sales@globalelectronics.tw",
+        "phone": "+886-2-9876543"
+      }
+    },
+    {
+      "id": "SUP-003",
+      "name": "American Parts Co",
+      "location": {
+        "city": "Austin",
+        "state": "Texas",
+        "country": "USA",
+        "region": "North America"
+      },
+      "reliability_score": 0.95,
+      "lead_time_days": 7,
+      "capacity_units_per_month": 20000,
+      "specialties": ["Electronics", "Assemblies"],
+      "contact": {
+        "email": "orders@americanparts.com",
+        "phone": "+1-512-555-0100"
+      }
+    },
+    {
+      "id": "SUP-004",
+      "name": "EuroTech Manufacturing",
+      "location": {
+        "city": "Munich",
+        "country": "Germany",
+        "region": "Europe"
+      },
+      "reliability_score": 0.90,
+      "lead_time_days": 12,
+      "capacity_units_per_month": 25000,
+      "specialties": ["Precision Parts", "Electronics"],
+      "contact": {
+        "email": "info@eurotech.de",
+        "phone": "+49-89-1234567"
+      }
+    },
+    {
+      "id": "SUP-005",
+      "name": "Dubai Electronics Hub",
+      "location": {
+        "city": "Dubai",
+        "country": "UAE",
+        "region": "Middle East"
+      },
+      "reliability_score": 0.87,
+      "lead_time_days": 9,
+      "capacity_units_per_month": 35000,
+      "specialties": ["Electronics", "Consumer Goods"],
+      "contact": {
+        "email": "orders@dubaielectronics.ae",
+        "phone": "+971-4-1234567"
+      }
+    },
+    {
+      "id": "SUP-006",
+      "name": "Istanbul Tech Manufacturing",
+      "location": {
+        "city": "Istanbul",
+        "country": "Turkey",
+        "region": "Middle East"
+      },
+      "reliability_score": 0.89,
+      "lead_time_days": 11,
+      "capacity_units_per_month": 28000,
+      "specialties": ["Electronics", "Industrial Parts"],
+      "contact": {
+        "email": "sales@istanbultech.tr",
+        "phone": "+90-212-9876543"
+      }
+    }
+  ],
+  "skus": [
+    {
+      "id": "SKU-001",
+      "name": "Wireless Router Pro X1",
+      "category": "Networking",
+      "unit_cost": 45.00,
+      "retail_price": 129.99,
+      "weight_kg": 0.8,
+      "primary_supplier": "SUP-001",
+      "backup_suppliers": ["SUP-002", "SUP-003"],
+      "lead_time_days": 14,
+      "safety_stock_units": 500,
+      "reorder_point": 200
+    },
+    {
+      "id": "SKU-002",
+      "name": "Smart Home Hub Elite",
+      "category": "Smart Home",
+      "unit_cost": 65.00,
+      "retail_price": 199.99,
+      "weight_kg": 0.5,
+      "primary_supplier": "SUP-001",
+      "backup_suppliers": ["SUP-004"],
+      "lead_time_days": 14,
+      "safety_stock_units": 300,
+      "reorder_point": 150
+    },
+    {
+      "id": "SKU-003",
+      "name": "4K Security Camera",
+      "category": "Security",
+      "unit_cost": 55.00,
+      "retail_price": 159.99,
+      "weight_kg": 0.6,
+      "primary_supplier": "SUP-002",
+      "backup_suppliers": ["SUP-001", "SUP-003"],
+      "lead_time_days": 10,
+      "safety_stock_units": 400,
+      "reorder_point": 180
+    },
+    {
+      "id": "SKU-004",
+      "name": "Smart Thermostat V2",
+      "category": "Smart Home",
+      "unit_cost": 38.00,
+      "retail_price": 99.99,
+      "weight_kg": 0.3,
+      "primary_supplier": "SUP-003",
+      "backup_suppliers": ["SUP-004"],
+      "lead_time_days": 7,
+      "safety_stock_units": 600,
+      "reorder_point": 250
+    },
+    {
+      "id": "SKU-005",
+      "name": "LED Smart Bulb 4-Pack",
+      "category": "Lighting",
+      "unit_cost": 22.00,
+      "retail_price": 49.99,
+      "weight_kg": 0.4,
+      "primary_supplier": "SUP-004",
+      "backup_suppliers": ["SUP-002"],
+      "lead_time_days": 12,
+      "safety_stock_units": 800,
+      "reorder_point": 350
+    }
+  ],
+  "customers": [
+    {
+      "id": "CUST-001",
+      "name": "TechMart Retail Chain",
+      "type": "Enterprise",
+      "criticality_score": 0.95,
+      "annual_revenue": 2500000,
+      "location": {
+        "city": "New York",
+        "state": "NY",
+        "country": "USA"
+      },
+      "contact": {
+        "name": "Sarah Johnson",
+        "email": "sarah.johnson@techmart.com",
+        "phone": "+1-212-555-0150"
+      },
+      "sla": {
+        "delivery_days": 3,
+        "on_time_target": 0.98
+      }
+    },
+    {
+      "id": "CUST-002",
+      "name": "HomeGoods Plus",
+      "type": "Retail",
+      "criticality_score": 0.85,
+      "annual_revenue": 1200000,
+      "location": {
+        "city": "Los Angeles",
+        "state": "CA",
+        "country": "USA"
+      },
+      "contact": {
+        "name": "Michael Chen",
+        "email": "m.chen@homegoods.com",
+        "phone": "+1-310-555-0200"
+      },
+      "sla": {
+        "delivery_days": 5,
+        "on_time_target": 0.95
+      }
+    },
+    {
+      "id": "CUST-003",
+      "name": "SmartLiving Direct",
+      "type": "E-commerce",
+      "criticality_score": 0.90,
+      "annual_revenue": 1800000,
+      "location": {
+        "city": "Seattle",
+        "state": "WA",
+        "country": "USA"
+      },
+      "contact": {
+        "name": "Emily Rodriguez",
+        "email": "emily@smartliving.com",
+        "phone": "+1-206-555-0175"
+      },
+      "sla": {
+        "delivery_days": 2,
+        "on_time_target": 0.99
+      }
+    },
+    {
+      "id": "CUST-004",
+      "name": "BuildRight Hardware",
+      "type": "Retail",
+      "criticality_score": 0.75,
+      "annual_revenue": 800000,
+      "location": {
+        "city": "Chicago",
+        "state": "IL",
+        "country": "USA"
+      },
+      "contact": {
+        "name": "David Thompson",
+        "email": "david.t@buildright.com",
+        "phone": "+1-312-555-0190"
+      },
+      "sla": {
+        "delivery_days": 7,
+        "on_time_target": 0.92
+      }
+    },
+    {
+      "id": "CUST-005",
+      "name": "TechZone Online",
+      "type": "E-commerce",
+      "criticality_score": 0.88,
+      "annual_revenue": 1500000,
+      "location": {
+        "city": "Miami",
+        "state": "FL",
+        "country": "USA"
+      },
+      "contact": {
+        "name": "Lisa Martinez",
+        "email": "lisa@techzone.com",
+        "phone": "+1-305-555-0220"
+      },
+      "sla": {
+        "delivery_days": 3,
+        "on_time_target": 0.97
+      }
+    }
+  ],
+  "orders": [
+    {
+      "id": "ORD-001",
+      "customer_id": "CUST-001",
+      "status": "in_transit",
+      "priority": "high",
+      "order_date": "2026-04-25T10:00:00Z",
+      "promised_delivery": "2026-05-05T17:00:00Z",
+      "items": [
+        {"sku_id": "SKU-001", "quantity": 150, "unit_price": 129.99},
+        {"sku_id": "SKU-002", "quantity": 100, "unit_price": 199.99}
+      ],
+      "total_value": 39498.50,
+      "shipping": {
+        "carrier": "FedEx",
+        "tracking": "FDX123456789",
+        "origin": "Shenzhen, China",
+        "destination": "New York, NY"
+      },
+      "supplier_id": "SUP-001"
+    },
+    {
+      "id": "ORD-002",
+      "customer_id": "CUST-003",
+      "status": "processing",
+      "priority": "critical",
+      "order_date": "2026-04-28T14:30:00Z",
+      "promised_delivery": "2026-05-03T12:00:00Z",
+      "items": [
+        {"sku_id": "SKU-003", "quantity": 200, "unit_price": 159.99},
+        {"sku_id": "SKU-004", "quantity": 180, "unit_price": 99.99}
+      ],
+      "total_value": 49980.20,
+      "shipping": {
+        "carrier": "UPS",
+        "tracking": "UPS987654321",
+        "origin": "Taipei, Taiwan",
+        "destination": "Seattle, WA"
+      },
+      "supplier_id": "SUP-002"
+    },
+    {
+      "id": "ORD-003",
+      "customer_id": "CUST-002",
+      "status": "pending",
+      "priority": "medium",
+      "order_date": "2026-04-30T09:15:00Z",
+      "promised_delivery": "2026-05-08T17:00:00Z",
+      "items": [
+        {"sku_id": "SKU-005", "quantity": 300, "unit_price": 49.99}
+      ],
+      "total_value": 14997.00,
+      "shipping": {
+        "carrier": "USPS",
+        "tracking": "USPS456789123",
+        "origin": "Munich, Germany",
+        "destination": "Los Angeles, CA"
+      },
+      "supplier_id": "SUP-004"
+    },
+    {
+      "id": "ORD-004",
+      "customer_id": "CUST-005",
+      "status": "in_transit",
+      "priority": "high",
+      "order_date": "2026-04-26T16:45:00Z",
+      "promised_delivery": "2026-05-04T15:00:00Z",
+      "items": [
+        {"sku_id": "SKU-001", "quantity": 120, "unit_price": 129.99},
+        {"sku_id": "SKU-003", "quantity": 90, "unit_price": 159.99}
+      ],
+      "total_value": 29997.90,
+      "shipping": {
+        "carrier": "DHL",
+        "tracking": "DHL789123456",
+        "origin": "Shenzhen, China",
+        "destination": "Miami, FL"
+      },
+      "supplier_id": "SUP-001"
+    },
+    {
+      "id": "ORD-005",
+      "customer_id": "CUST-004",
+      "status": "processing",
+      "priority": "low",
+      "order_date": "2026-05-01T11:20:00Z",
+      "promised_delivery": "2026-05-12T17:00:00Z",
+      "items": [
+        {"sku_id": "SKU-004", "quantity": 250, "unit_price": 99.99}
+      ],
+      "total_value": 24997.50,
+      "shipping": {
+        "carrier": "FedEx",
+        "tracking": "FDX321654987",
+        "origin": "Austin, TX",
+        "destination": "Chicago, IL"
+      },
+      "supplier_id": "SUP-003"
+    },
+    {
+      "id": "ORD-006",
+      "customer_id": "CUST-001",
+      "status": "in_transit",
+      "priority": "critical",
+      "order_date": "2026-04-29T08:30:00Z",
+      "promised_delivery": "2026-05-06T17:00:00Z",
+      "items": [
+        {"sku_id": "SKU-002", "quantity": 200, "unit_price": 199.99},
+        {"sku_id": "SKU-004", "quantity": 150, "unit_price": 99.99}
+      ],
+      "total_value": 54998.50,
+      "shipping": {
+        "carrier": "DHL",
+        "tracking": "DHL456789012",
+        "origin": "Dubai, UAE",
+        "destination": "New York, NY"
+      },
+      "supplier_id": "SUP-005"
+    },
+    {
+      "id": "ORD-007",
+      "customer_id": "CUST-003",
+      "status": "processing",
+      "priority": "high",
+      "order_date": "2026-05-01T14:20:00Z",
+      "promised_delivery": "2026-05-09T12:00:00Z",
+      "items": [
+        {"sku_id": "SKU-001", "quantity": 180, "unit_price": 129.99},
+        {"sku_id": "SKU-005", "quantity": 220, "unit_price": 49.99}
+      ],
+      "total_value": 34396.00,
+      "shipping": {
+        "carrier": "FedEx",
+        "tracking": "FDX789456123",
+        "origin": "Istanbul, Turkey",
+        "destination": "Seattle, WA"
+      },
+      "supplier_id": "SUP-006"
+    }
+  ],
+  "inventory": [
+    {
+      "sku_id": "SKU-001",
+      "warehouse": "WH-WEST",
+      "location": "Los Angeles, CA",
+      "quantity": 450,
+      "reserved": 270,
+      "available": 180
+    },
+    {
+      "sku_id": "SKU-001",
+      "warehouse": "WH-EAST",
+      "location": "Newark, NJ",
+      "quantity": 380,
+      "reserved": 150,
+      "available": 230
+    },
+    {
+      "sku_id": "SKU-002",
+      "warehouse": "WH-WEST",
+      "location": "Los Angeles, CA",
+      "quantity": 220,
+      "reserved": 100,
+      "available": 120
+    },
+    {
+      "sku_id": "SKU-003",
+      "warehouse": "WH-CENTRAL",
+      "location": "Dallas, TX",
+      "quantity": 520,
+      "reserved": 290,
+      "available": 230
+    },
+    {
+      "sku_id": "SKU-004",
+      "warehouse": "WH-EAST",
+      "location": "Newark, NJ",
+      "quantity": 680,
+      "reserved": 250,
+      "available": 430
+    },
+    {
+      "sku_id": "SKU-005",
+      "warehouse": "WH-CENTRAL",
+      "location": "Dallas, TX",
+      "quantity": 920,
+      "reserved": 300,
+      "available": 620
+    }
+  ]
+}

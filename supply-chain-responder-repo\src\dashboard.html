@@ -1,0 +1,1264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Supply Chain Dashboard - Autonomous Disruption Responder</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #f5f7fa;
+            color: #2d3748;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .header h1 {
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+        
+        .header p {
+            opacity: 0.9;
+            font-size: 14px;
+        }
+        
+        .status-badge-header {
+            display: inline-block;
+            padding: 4px 12px;
+            background: #10b981;
+            color: white;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-top: 8px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 30px;
+        }
+        
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .metric-card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        .metric-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+        }
+        
+        .metric-value {
+            font-size: 36px;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 8px;
+        }
+        
+        .metric-label {
+            font-size: 14px;
+            color: #718096;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .section {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #e2e8f0;
+            cursor: pointer;
+            user-select: none;
+        }
+        
+        .section-header:hover {
+            background: #f7fafc;
+            margin: -10px -10px 20px -10px;
+            padding: 10px 10px 15px 10px;
+            border-radius: 8px;
+        }
+        
+        .section-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #2d3748;
+            display: flex;
+            align-items: center;
+        }
+        
+        .collapse-icon {
+            margin-left: 10px;
+            font-size: 18px;
+            transition: transform 0.3s;
+        }
+        
+        .collapse-icon.collapsed {
+            transform: rotate(-90deg);
+        }
+        
+        .section-content {
+            max-height: 2000px;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out, opacity 0.3s ease-out;
+            opacity: 1;
+        }
+        
+        .section-content.collapsed {
+            max-height: 0;
+            opacity: 0;
+        }
+        
+        .refresh-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background 0.2s;
+        }
+        
+        .refresh-btn:hover {
+            background: #5568d3;
+        }
+        
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .table th {
+            background: #f7fafc;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 13px;
+            color: #4a5568;
+            border-bottom: 2px solid #e2e8f0;
+        }
+        
+        .table td {
+            padding: 12px;
+            border-bottom: 1px solid #e2e8f0;
+            font-size: 14px;
+        }
+        
+        .table tr:hover {
+            background: #f7fafc;
+        }
+        
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .status-in_transit {
+            background: #bee3f8;
+            color: #2c5282;
+        }
+        
+        .status-processing {
+            background: #feebc8;
+            color: #7c2d12;
+        }
+        
+        .status-pending {
+            background: #e2e8f0;
+            color: #2d3748;
+        }
+        
+        .priority-critical {
+            color: #e53e3e;
+            font-weight: 600;
+        }
+        
+        .priority-high {
+            color: #dd6b20;
+            font-weight: 600;
+        }
+        
+        .priority-medium {
+            color: #d69e2e;
+        }
+        
+        .priority-low {
+            color: #38a169;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #718096;
+        }
+        
+        .error {
+            background: #fed7d7;
+            color: #742a2a;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        
+        .scenario-card {
+            background: #f7fafc;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border-left: 4px solid #667eea;
+            position: relative;
+        }
+        
+        .scenario-title {
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #2d3748;
+            font-size: 16px;
+        }
+        
+        .scenario-desc {
+            font-size: 14px;
+            color: #4a5568;
+            margin-bottom: 12px;
+        }
+        
+        .scenario-severity {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 10px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-right: 8px;
+        }
+        
+        .severity-critical {
+            background: #fed7d7;
+            color: #742a2a;
+        }
+        
+        .severity-high {
+            background: #feebc8;
+            color: #7c2d12;
+        }
+        
+        .severity-medium {
+            background: #fefcbf;
+            color: #744210;
+        }
+        
+        .status-badge-scenario {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 10px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-right: 8px;
+        }
+        
+        .status-active {
+            background: #fed7d7;
+            color: #742a2a;
+            animation: pulse 2s infinite;
+        }
+        
+        .status-monitoring {
+            background: #e2e8f0;
+            color: #4a5568;
+        }
+        
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.7;
+            }
+        }
+        
+        .impact-btn {
+            background: #48bb78;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            margin-top: 8px;
+            font-weight: 600;
+        }
+        
+        .impact-btn:hover {
+            background: #38a169;
+        }
+        
+        .approve-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            width: 100%;
+            margin-top: 15px;
+            transition: background 0.2s;
+        }
+        
+        .approve-btn:hover {
+            background: #5568d3;
+        }
+        
+        .approve-btn:disabled {
+            background: #cbd5e0;
+            cursor: not-allowed;
+        }
+        
+        .execution-details {
+            background: #f0fff4;
+            border: 2px solid #48bb78;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 15px;
+            display: none;
+        }
+        
+        .execution-details.show {
+            display: block;
+            animation: slideDown 0.3s ease;
+        }
+        
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .execution-title {
+            font-weight: 600;
+            color: #22543d;
+            margin-bottom: 10px;
+            font-size: 15px;
+        }
+        
+        .execution-item {
+            background: white;
+            padding: 10px;
+            margin-bottom: 8px;
+            border-radius: 6px;
+            border-left: 3px solid #48bb78;
+        }
+        
+        .execution-item-title {
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 4px;
+        }
+        
+        .execution-item-detail {
+            font-size: 13px;
+            color: #4a5568;
+        }
+        
+        .success-badge {
+            display: inline-block;
+            background: #48bb78;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+        
+        /* Side Panel Styles */
+        .side-panel {
+            position: fixed;
+            right: -600px;
+            top: 0;
+            width: 600px;
+            height: 100vh;
+            background: white;
+            box-shadow: -4px 0 20px rgba(0,0,0,0.15);
+            transition: right 0.3s ease;
+            z-index: 1000;
+            overflow-y: auto;
+        }
+        
+        .side-panel.open {
+            right: 0;
+        }
+        
+        .side-panel-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        
+        .side-panel-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .close-panel {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            font-size: 24px;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .close-panel:hover {
+            background: rgba(255,255,255,0.3);
+        }
+        
+        .side-panel-content {
+            padding: 20px;
+        }
+        
+        .impact-section {
+            margin-bottom: 25px;
+            padding: 15px;
+            background: #f7fafc;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .impact-section-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .impact-section-title::before {
+            content: '📊';
+            margin-right: 8px;
+        }
+        
+        .impact-metric {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        .impact-metric:last-child {
+            border-bottom: none;
+        }
+        
+        .impact-label {
+            color: #4a5568;
+            font-size: 14px;
+        }
+        
+        .impact-value {
+            font-weight: 600;
+            color: #2d3748;
+        }
+        
+        .impact-value.negative {
+            color: #e53e3e;
+        }
+        
+        .impact-value.positive {
+            color: #38a169;
+        }
+        
+        .resolution-option {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border: 2px solid #e2e8f0;
+            transition: all 0.2s;
+        }
+        
+        .resolution-option:hover {
+            border-color: #667eea;
+            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.1);
+        }
+        
+        .resolution-title {
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 8px;
+            font-size: 15px;
+        }
+        
+        .resolution-desc {
+            color: #4a5568;
+            font-size: 13px;
+            margin-bottom: 12px;
+        }
+        
+        .resolution-metrics {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+        }
+        
+        .resolution-metric {
+            background: #f7fafc;
+            padding: 8px;
+            border-radius: 6px;
+            text-align: center;
+        }
+        
+        .resolution-metric-label {
+            font-size: 11px;
+            color: #718096;
+            text-transform: uppercase;
+            margin-bottom: 4px;
+        }
+        
+        .resolution-metric-value {
+            font-size: 16px;
+            font-weight: 600;
+            color: #667eea;
+        }
+        
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            display: none;
+            z-index: 999;
+        }
+        
+        .overlay.active {
+            display: block;
+        }
+        
+        .affected-orders-list {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .affected-order-item {
+            background: white;
+            padding: 10px;
+            margin-bottom: 8px;
+            border-radius: 6px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .order-id {
+            font-weight: 600;
+            color: #667eea;
+        }
+        
+        .order-customer {
+            color: #4a5568;
+            font-size: 13px;
+        }
+    </style>
+</head>
+<body>
+    <div class="overlay" id="overlay" onclick="closeSidePanel()"></div>
+    
+    <div class="header">
+        <h1>🚀 Autonomous Supply Chain Disruption Responder</h1>
+        <p>Real-time Disruption Detection & Autonomous Response System</p>
+        <span class="status-badge-header">✓ SYSTEM OPERATIONAL</span>
+    </div>
+    
+    <div class="container">
+        <!-- Metrics -->
+        <div class="metrics-grid">
+            <div class="metric-card">
+                <div class="metric-value" id="metric-disruptions">-</div>
+                <div class="metric-label">Active Disruptions</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-value" id="metric-suppliers">-</div>
+                <div class="metric-label">Total Suppliers</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-value" id="metric-active-orders">-</div>
+                <div class="metric-label">Active Orders</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-value" id="metric-scenarios">-</div>
+                <div class="metric-label">Monitoring Disruptions</div>
+            </div>
+        </div>
+        
+        <!-- Disruption Events -->
+        <div class="section">
+            <div class="section-header" onclick="toggleSection('scenarios-content', 'scenarios-icon')">
+                <h2 class="section-title">
+                    🎯 Disruption Events
+                    <span class="collapse-icon" id="scenarios-icon">▼</span>
+                </h2>
+                <button class="refresh-btn" onclick="event.stopPropagation(); loadScenarios()">Refresh</button>
+            </div>
+            <div class="section-content" id="scenarios-content">
+                <div class="loading">Loading events...</div>
+            </div>
+        </div>
+        
+        <!-- Suppliers -->
+        <div class="section">
+            <div class="section-header" onclick="toggleSection('suppliers-content', 'suppliers-icon')">
+                <h2 class="section-title">
+                    🏭 Suppliers
+                    <span class="collapse-icon" id="suppliers-icon">▼</span>
+                </h2>
+                <button class="refresh-btn" onclick="event.stopPropagation(); loadSuppliers()">Refresh</button>
+            </div>
+            <div class="section-content" id="suppliers-content">
+                <div class="loading">Loading suppliers...</div>
+            </div>
+        </div>
+        
+        <!-- Active Orders -->
+        <div class="section">
+            <div class="section-header" onclick="toggleSection('orders-content', 'orders-icon')">
+                <h2 class="section-title">
+                    📦 Active Orders
+                    <span class="collapse-icon" id="orders-icon">▼</span>
+                </h2>
+                <button class="refresh-btn" onclick="event.stopPropagation(); loadOrders()">Refresh</button>
+            </div>
+            <div class="section-content" id="orders-content">
+                <div class="loading">Loading orders...</div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Side Panel for Impact & Resolution -->
+    <div class="side-panel" id="sidePanel">
+        <div class="side-panel-header">
+            <div class="side-panel-title" id="panelTitle">Impact & Resolution Analysis</div>
+            <button class="close-panel" onclick="closeSidePanel()">×</button>
+        </div>
+        <div class="side-panel-content" id="panelContent">
+            <!-- Content will be dynamically loaded -->
+        </div>
+    </div>
+    
+    <script>
+        const API_BASE = window.location.origin;
+        let scenariosData = [];
+        
+        // Load dashboard metrics
+        async function loadDashboard() {
+            try {
+                const response = await fetch(`${API_BASE}/api/dashboard`);
+                const data = await response.json();
+                
+                if (data.metrics) {
+                    document.getElementById('metric-disruptions').textContent = data.metrics.active_disruptions;
+                    document.getElementById('metric-suppliers').textContent = data.metrics.total_suppliers;
+                    document.getElementById('metric-active-orders').textContent = data.metrics.active_orders;
+                    document.getElementById('metric-scenarios').textContent = data.metrics.available_scenarios;
+                }
+            } catch (error) {
+                console.error('Error loading dashboard:', error);
+            }
+        }
+        
+        // Load scenarios
+        async function loadScenarios() {
+            const container = document.getElementById('scenarios-content');
+            container.innerHTML = '<div class="loading">Loading scenarios...</div>';
+            
+            try {
+                const response = await fetch(`${API_BASE}/api/scenarios`);
+                const data = await response.json();
+                
+                if (data.error) {
+                    container.innerHTML = `<div class="error">Error: ${data.error}</div>`;
+                    return;
+                }
+                
+                if (!data.scenarios || data.scenarios.length === 0) {
+                    container.innerHTML = '<p>No scenarios available.</p>';
+                    return;
+                }
+                
+                // Sort scenarios: Middle East Tensions first, then active, then monitoring
+                const sortedScenarios = data.scenarios.sort((a, b) => {
+                    // Always put SCENARIO-006 (Middle East Tensions) at the top
+                    if (a.id === 'SCENARIO-006') return -1;
+                    if (b.id === 'SCENARIO-006') return 1;
+                    
+                    // Then sort by status: active first, then monitoring
+                    if (a.status === 'active' && b.status !== 'active') return -1;
+                    if (a.status !== 'active' && b.status === 'active') return 1;
+                    return 0;
+                });
+                
+                scenariosData = sortedScenarios;
+                
+                let html = '';
+                sortedScenarios.forEach(scenario => {
+                    const statusLabel = scenario.status === 'active' ? 'ACTIVE' : 'MONITORING';
+                    const statusClass = scenario.status === 'active' ? 'status-active' : 'status-monitoring';
+                    
+                    html += `
+                        <div class="scenario-card">
+                            <div class="scenario-title">${scenario.name}</div>
+                            <div class="scenario-desc">${scenario.description}</div>
+                            <span class="status-badge-scenario ${statusClass}">${statusLabel}</span>
+                            <span class="scenario-severity severity-${scenario.severity}">${scenario.severity}</span>
+                            <button class="impact-btn" onclick="showImpactAnalysis('${scenario.id}')">📊 Impact & Resolution</button>
+                        </div>
+                    `;
+                });
+                
+                container.innerHTML = html;
+            } catch (error) {
+                container.innerHTML = `<div class="error">Error loading scenarios: ${error.message}</div>`;
+            }
+        }
+        
+        // Show Impact Analysis in Side Panel
+        function showImpactAnalysis(scenarioId) {
+            const scenario = scenariosData.find(s => s.id === scenarioId);
+            if (!scenario) return;
+            
+            const panel = document.getElementById('sidePanel');
+            const overlay = document.getElementById('overlay');
+            const panelTitle = document.getElementById('panelTitle');
+            const panelContent = document.getElementById('panelContent');
+            
+            panelTitle.textContent = `Impact & Resolution: ${scenario.name}`;
+            
+            // Calculate baseline delivery date (today + delay)
+            const today = new Date();
+            const baselineDeliveryDate = new Date(today);
+            baselineDeliveryDate.setDate(baselineDeliveryDate.getDate() + scenario.expected_impact.estimated_delay_days);
+            
+            // Build impact analysis content
+            let content = `
+                <div class="impact-section">
+                    <div class="impact-section-title">📊 Impact Summary (Without Mitigation)</div>
+                    <div class="impact-metric">
+                        <span class="impact-label">Severity Level</span>
+                        <span class="impact-value negative">${scenario.severity.toUpperCase()}</span>
+                    </div>
+                    <div class="impact-metric">
+                        <span class="impact-label">Affected Orders</span>
+                        <span class="impact-value negative">${scenario.expected_impact.affected_orders.length} orders</span>
+                    </div>
+                    <div class="impact-metric">
+                        <span class="impact-label">Affected Customers</span>
+                        <span class="impact-value negative">${scenario.expected_impact.affected_customers.length} customers</span>
+                    </div>
+                    <div class="impact-metric">
+                        <span class="impact-label">Baseline Delay (No Action)</span>
+                        <span class="impact-value negative">${scenario.expected_impact.estimated_delay_days} days</span>
+                    </div>
+                    <div class="impact-metric">
+                        <span class="impact-label">Baseline Delivery Date</span>
+                        <span class="impact-value negative">${baselineDeliveryDate.toLocaleDateString()}</span>
+                    </div>
+                    <div class="impact-metric">
+                        <span class="impact-label">Baseline Cost Impact (No Action)</span>
+                        <span class="impact-value negative">$${scenario.expected_impact.estimated_cost.toLocaleString()}</span>
+                    </div>
+                    <div class="impact-metric">
+                        <span class="impact-label">SLA Violations</span>
+                        <span class="impact-value negative">${scenario.expected_impact.sla_violations}</span>
+                    </div>
+                </div>
+                
+                <div class="impact-section">
+                    <div class="impact-section-title">📦 Affected Orders</div>
+                    <ul class="affected-orders-list">
+            `;
+            
+            scenario.expected_impact.affected_orders.forEach(orderId => {
+                const customerIndex = scenario.expected_impact.affected_orders.indexOf(orderId);
+                const customerId = scenario.expected_impact.affected_customers[customerIndex] || 'Unknown';
+                content += `
+                    <li class="affected-order-item">
+                        <span class="order-id">${orderId}</span>
+                        <span class="order-customer">${customerId}</span>
+                    </li>
+                `;
+            });
+            
+            content += `
+                    </ul>
+                </div>
+                
+                <div class="impact-section">
+                    <div class="impact-section-title">💡 Resolution Options</div>
+            `;
+            
+            scenario.recommended_actions.forEach((action, index) => {
+                // Calculate realistic cost impact (mitigation typically costs 5-15% more than baseline)
+                const costIncrease = ((action.estimated_cost - scenario.expected_impact.estimated_cost) / scenario.expected_impact.estimated_cost * 100).toFixed(1);
+                const costIncreasePositive = costIncrease > 0;
+                const costImpactText = costIncreasePositive ? `+${costIncrease}%` : `${costIncrease}%`;
+                
+                // Calculate time savings
+                const timeSavings = ((action.estimated_time_saved_days / scenario.expected_impact.estimated_delay_days) * 100).toFixed(0);
+                const newDeliveryTime = scenario.expected_impact.estimated_delay_days - action.estimated_time_saved_days;
+                
+                // Calculate new delivery date
+                const newDeliveryDate = new Date(today);
+                newDeliveryDate.setDate(newDeliveryDate.getDate() + newDeliveryTime);
+                
+                // Net benefit calculation (time saved value minus additional cost)
+                const netBenefit = scenario.expected_impact.estimated_cost - action.estimated_cost;
+                const netBenefitPositive = netBenefit > 0;
+                
+                content += `
+                    <div class="resolution-option">
+                        <div class="resolution-title">Option ${index + 1}: ${action.type.replace(/_/g, ' ').toUpperCase()}</div>
+                        <div class="resolution-desc">${action.description}</div>
+                        <div class="resolution-metrics">
+                            <div class="resolution-metric">
+                                <div class="resolution-metric-label">Baseline Cost</div>
+                                <div class="resolution-metric-value">$${scenario.expected_impact.estimated_cost.toLocaleString()}</div>
+                            </div>
+                            <div class="resolution-metric">
+                                <div class="resolution-metric-label">Mitigation Cost</div>
+                                <div class="resolution-metric-value">$${action.estimated_cost.toLocaleString()}</div>
+                            </div>
+                            <div class="resolution-metric">
+                                <div class="resolution-metric-label">Cost Impact</div>
+                                <div class="resolution-metric-value" style="color: ${costIncreasePositive ? '#e53e3e' : '#38a169'}">${costImpactText} ${costIncreasePositive ? '↑' : '↓'}</div>
+                            </div>
+                            <div class="resolution-metric">
+                                <div class="resolution-metric-label">Baseline Delay</div>
+                                <div class="resolution-metric-value">${scenario.expected_impact.estimated_delay_days} days</div>
+                            </div>
+                            <div class="resolution-metric">
+                                <div class="resolution-metric-label">Time Saved</div>
+                                <div class="resolution-metric-value" style="color: #38a169">${action.estimated_time_saved_days} days ↓</div>
+                            </div>
+                            <div class="resolution-metric">
+                                <div class="resolution-metric-label">New Delay</div>
+                                <div class="resolution-metric-value">${newDeliveryTime} days</div>
+                            </div>
+                            <div class="resolution-metric">
+                                <div class="resolution-metric-label">Baseline Delivery</div>
+                                <div class="resolution-metric-value">${baselineDeliveryDate.toLocaleDateString()}</div>
+                            </div>
+                            <div class="resolution-metric">
+                                <div class="resolution-metric-label">New Delivery</div>
+                                <div class="resolution-metric-value" style="color: #38a169">${newDeliveryDate.toLocaleDateString()}</div>
+                            </div>
+                            <div class="resolution-metric">
+                                <div class="resolution-metric-label">Time Reduction</div>
+                                <div class="resolution-metric-value" style="color: #38a169">${timeSavings}% ↓</div>
+                            </div>
+                            <div class="resolution-metric">
+                                <div class="resolution-metric-label">Net Benefit</div>
+                                <div class="resolution-metric-value" style="color: ${netBenefitPositive ? '#38a169' : '#e53e3e'}">${netBenefitPositive ? '+' : ''}$${netBenefit.toLocaleString()}</div>
+                            </div>
+                        </div>
+                        <button class="approve-btn" onclick="approveResolution('${scenario.id}', ${index}, '${action.type}', '${action.description}')">
+                            ✓ Approve & Execute Resolution
+                        </button>
+                        <div class="execution-details" id="execution-${scenario.id}-${index}">
+                            <!-- Execution details will be populated here -->
+                        </div>
+                    </div>
+                `;
+            });
+            
+            content += `</div>`;
+            
+            panelContent.innerHTML = content;
+            panel.classList.add('open');
+            overlay.classList.add('active');
+        }
+        
+        // Close Side Panel
+        function closeSidePanel() {
+            document.getElementById('sidePanel').classList.remove('open');
+            document.getElementById('overlay').classList.remove('active');
+        }
+        
+        // Approve and Execute Resolution
+        async function approveResolution(scenarioId, optionIndex, actionType, actionDesc) {
+            const scenario = scenariosData.find(s => s.id === scenarioId);
+            if (!scenario) return;
+            
+            const action = scenario.recommended_actions[optionIndex];
+            const executionDiv = document.getElementById(`execution-${scenarioId}-${optionIndex}`);
+            const button = event.target;
+            
+            // Disable button and show loading
+            button.disabled = true;
+            button.textContent = '⏳ Executing...';
+            
+            // Simulate execution delay
+            await new Promise(resolve => setTimeout(resolve, 1500));
+            
+            // Get affected orders details
+            const affectedOrders = scenario.expected_impact.affected_orders;
+            const affectedCustomers = scenario.expected_impact.affected_customers;
+            
+            // Build execution details
+            let executionHTML = `
+                <span class="success-badge">✓ Resolution Executed Successfully</span>
+                <div class="execution-title">📋 Execution Summary</div>
+            `;
+            
+            // Add action-specific details
+            if (actionType.includes('reroute_supplier')) {
+                executionHTML += `
+                    <div class="execution-item">
+                        <div class="execution-item-title">🔄 Supplier Rerouting Completed</div>
+                        <div class="execution-item-detail">
+                            ${affectedOrders.length} orders rerouted from primary supplier to backup supplier
+                        </div>
+                    </div>
+                `;
+                
+                affectedOrders.forEach((orderId, idx) => {
+                    const customerId = affectedCustomers[idx] || 'Unknown';
+                    executionHTML += `
+                        <div class="execution-item">
+                            <div class="execution-item-title">📦 ${orderId}</div>
+                            <div class="execution-item-detail">
+                                <strong>Customer:</strong> ${customerId}<br>
+                                <strong>Action:</strong> Rerouted to backup supplier SUP-002 (Taiwan)<br>
+                                <strong>New Lead Time:</strong> ${scenario.expected_impact.estimated_delay_days - action.estimated_time_saved_days} days<br>
+                                <strong>Status:</strong> <span style="color: #48bb78">✓ Confirmed</span>
+                            </div>
+                        </div>
+                    `;
+                });
+            } else if (actionType.includes('expedite')) {
+                executionHTML += `
+                    <div class="execution-item">
+                        <div class="execution-item-title">✈️ Shipment Expedited</div>
+                        <div class="execution-item-detail">
+                            ${affectedOrders.length} orders upgraded to express shipping
+                        </div>
+                    </div>
+                `;
+                
+                affectedOrders.forEach((orderId, idx) => {
+                    const customerId = affectedCustomers[idx] || 'Unknown';
+                    executionHTML += `
+                        <div class="execution-item">
+                            <div class="execution-item-title">📦 ${orderId}</div>
+                            <div class="execution-item-detail">
+                                <strong>Customer:</strong> ${customerId}<br>
+                                <strong>Action:</strong> Upgraded to air freight express<br>
+                                <strong>New Delivery:</strong> ${scenario.expected_impact.estimated_delay_days - action.estimated_time_saved_days} days<br>
+                                <strong>Carrier:</strong> DHL Express<br>
+                                <strong>Status:</strong> <span style="color: #48bb78">✓ Booked</span>
+                            </div>
+                        </div>
+                    `;
+                });
+            } else if (actionType.includes('reallocate') || actionType.includes('inventory')) {
+                executionHTML += `
+                    <div class="execution-item">
+                        <div class="execution-item-title">📊 Inventory Reallocation Completed</div>
+                        <div class="execution-item-detail">
+                            ${affectedOrders.length} orders fulfilled from alternative warehouse inventory
+                        </div>
+                    </div>
+                `;
+                
+                affectedOrders.forEach((orderId, idx) => {
+                    const customerId = affectedCustomers[idx] || 'Unknown';
+                    const warehouses = ['WH-EAST (Newark, NJ)', 'WH-WEST (Los Angeles, CA)', 'WH-CENTRAL (Dallas, TX)'];
+                    const warehouse = warehouses[idx % warehouses.length];
+                    executionHTML += `
+                        <div class="execution-item">
+                            <div class="execution-item-title">📦 ${orderId}</div>
+                            <div class="execution-item-detail">
+                                <strong>Customer:</strong> ${customerId}<br>
+                                <strong>Action:</strong> Fulfilled from ${warehouse}<br>
+                                <strong>New Delivery:</strong> ${scenario.expected_impact.estimated_delay_days - action.estimated_time_saved_days} days<br>
+                                <strong>Status:</strong> <span style="color: #48bb78">✓ Shipped</span>
+                            </div>
+                        </div>
+                    `;
+                });
+            } else {
+                // Generic execution for other action types
+                executionHTML += `
+                    <div class="execution-item">
+                        <div class="execution-item-title">✓ ${actionType.replace(/_/g, ' ').toUpperCase()}</div>
+                        <div class="execution-item-detail">${actionDesc}</div>
+                    </div>
+                `;
+                
+                affectedOrders.forEach((orderId, idx) => {
+                    const customerId = affectedCustomers[idx] || 'Unknown';
+                    executionHTML += `
+                        <div class="execution-item">
+                            <div class="execution-item-title">📦 ${orderId}</div>
+                            <div class="execution-item-detail">
+                                <strong>Customer:</strong> ${customerId}<br>
+                                <strong>Status:</strong> <span style="color: #48bb78">✓ Updated</span>
+                            </div>
+                        </div>
+                    `;
+                });
+            }
+            
+            // Add cost and time summary
+            const newDeliveryTime = scenario.expected_impact.estimated_delay_days - action.estimated_time_saved_days;
+            executionHTML += `
+                <div class="execution-item">
+                    <div class="execution-item-title">💰 Financial Impact</div>
+                    <div class="execution-item-detail">
+                        <strong>Mitigation Cost:</strong> $${action.estimated_cost.toLocaleString()}<br>
+                        <strong>Time Saved:</strong> ${action.estimated_time_saved_days} days<br>
+                        <strong>New Delivery Time:</strong> ${newDeliveryTime} days<br>
+                        <strong>Customers Notified:</strong> ${affectedCustomers.length}
+                    </div>
+                </div>
+            `;
+            
+            executionDiv.innerHTML = executionHTML;
+            executionDiv.classList.add('show');
+            
+            // Update button
+            button.textContent = '✓ Executed';
+            button.style.background = '#48bb78';
+        }
+        
+        // Load suppliers
+        async function loadSuppliers() {
+            const container = document.getElementById('suppliers-content');
+            container.innerHTML = '<div class="loading">Loading suppliers...</div>';
+            
+            try {
+                const response = await fetch(`${API_BASE}/api/suppliers`);
+                const data = await response.json();
+                
+                if (data.error) {
+                    container.innerHTML = `<div class="error">Error: ${data.error}</div>`;
+                    return;
+                }
+                
+                if (!data.suppliers || data.suppliers.length === 0) {
+                    container.innerHTML = '<p>No suppliers found.</p>';
+                    return;
+                }
+                
+                // Define impacted suppliers (from active scenarios)
+                const impactedSuppliers = ['SUP-001', 'SUP-002', 'SUP-005', 'SUP-006'];
+                
+                let html = `
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th>Location</th>
+                                <th>Status</th>
+                                <th>Reliability</th>
+                                <th>Lead Time</th>
+                                <th>Capacity/Month</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                `;
+                
+                data.suppliers.forEach(supplier => {
+                    const location = `${supplier.location.city}, ${supplier.location.country}`;
+                    const reliability = (supplier.reliability_score * 100).toFixed(0) + '%';
+                    const isImpacted = impactedSuppliers.includes(supplier.id);
+                    const statusLabel = isImpacted ? 'IMPACTED' : 'MONITORING';
+                    const statusClass = isImpacted ? 'status-active' : 'status-monitoring';
+                    
+                    html += `
+                        <tr>
+                            <td>${supplier.id}</td>
+                            <td><strong>${supplier.name}</strong></td>
+                            <td>${location}</td>
+                            <td><span class="status-badge-scenario ${statusClass}">${statusLabel}</span></td>
+                            <td>${reliability}</td>
+                            <td>${supplier.lead_time_days} days</td>
+                            <td>${supplier.capacity_units_per_month.toLocaleString()} units</td>
+                        </tr>
+                    `;
+                });
+                
+                html += '</tbody></table>';
+                container.innerHTML = html;
+            } catch (error) {
+                container.innerHTML = `<div class="error">Error loading suppliers: ${error.message}</div>`;
+            }
+        }
+        
+        // Load orders
+        async function loadOrders() {
+            const container = document.getElementById('orders-content');
+            container.innerHTML = '<div class="loading">Loading orders...</div>';
+            
+            try {
+                const response = await fetch(`${API_BASE}/api/orders`);
+                const data = await response.json();
+                
+                if (data.error) {
+                    container.innerHTML = `<div class="error">Error: ${data.error}</div>`;
+                    return;
+                }
+                
+                if (!data.orders || data.orders.length === 0) {
+                    container.innerHTML = '<p>No orders found.</p>';
+                    return;
+                }
+                
+                // Filter active orders
+                const activeOrders = data.orders.filter(o =>
+                    o.status === 'in_transit' || o.status === 'processing'
+                );
+                
+                if (activeOrders.length === 0) {
+                    container.innerHTML = '<p>No active orders at this time.</p>';
+                    return;
+                }
+                
+                // Define impacted orders (from active scenarios)
+                const impactedOrders = ['ORD-001', 'ORD-002', 'ORD-005', 'ORD-006', 'ORD-007'];
+                
+                let html = `
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Order ID</th>
+                                <th>Customer</th>
+                                <th>Order Status</th>
+                                <th>Impact Status</th>
+                                <th>Priority</th>
+                                <th>Value</th>
+                                <th>Delivery Date</th>
+                                <th>Supplier</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                `;
+                
+                activeOrders.forEach(order => {
+                    const deliveryDate = new Date(order.promised_delivery).toLocaleDateString();
+                    const value = '$' + order.total_value.toLocaleString('en-US', {minimumFractionDigits: 2});
+                    
+                    // Format status to proper case (e.g., "in_transit" -> "In Transit")
+                    const statusFormatted = order.status.split('_').map(word =>
+                        word.charAt(0).toUpperCase() + word.slice(1)
+                    ).join(' ');
+                    
+                    // Format priority to proper case
+                    const priorityFormatted = order.priority.charAt(0).toUpperCase() + order.priority.slice(1);
+                    
+                    // Determine impact status
+                    const isImpacted = impactedOrders.includes(order.id);
+                    const impactLabel = isImpacted ? 'IMPACTED' : 'MONITORING';
+                    const impactClass = isImpacted ? 'status-active' : 'status-monitoring';
+                    
+                    html += `
+                        <tr>
+                            <td><strong>${order.id}</strong></td>
+                            <td>${order.customer_id}</td>
+                            <td><span class="status-badge status-${order.status}">${statusFormatted}</span></td>
+                            <td><span class="status-badge-scenario ${impactClass}">${impactLabel}</span></td>
+                            <td><span class="priority-${order.priority}">${priorityFormatted}</span></td>
+                            <td>${value}</td>
+                            <td>${deliveryDate}</td>
+                            <td>${order.supplier_id}</td>
+                        </tr>
+                    `;
+                });
+                
+                html += '</tbody></table>';
+                container.innerHTML = html;
+            } catch (error) {
+                container.innerHTML = `<div class="error">Error loading orders: ${error.message}</div>`;
+            }
+        }
+        
+        // Toggle section collapse/expand
+        function toggleSection(contentId, iconId) {
+            const content = document.getElementById(contentId);
+            const icon = document.getElementById(iconId);
+            
+            content.classList.toggle('collapsed');
+            icon.classList.toggle('collapsed');
+        }
+        
+        // Initialize dashboard
+        window.addEventListener('DOMContentLoaded', () => {
+            loadDashboard();
+            loadScenarios();
+            loadSuppliers();
+            loadOrders();
+            
+            // Auto-refresh every 30 seconds
+            setInterval(() => {
+                loadDashboard();
+            }, 30000);
+        });
+    </script>
+</body>
+</html>

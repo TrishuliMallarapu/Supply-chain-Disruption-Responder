@@ -1,0 +1,9 @@
+# Autonomous Supply Chain Disruption Responder
+# Python Dependencies
+
+# No external dependencies required for the demo
+# All functionality uses Python standard library
+
+# Optional: For production deployment
+# gunicorn==21.2.0  # Production WSGI server
+# python-dotenv==1.0.0  # Environment variable management
